@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <b:growl id="grow" delay="4000"/>
+
+        <b:form id="menuTutor">
+
+            <c:if test="#{loginController.logado==null}">
+                <script>
+                    location.href = ' index.xhtml';
+                </script>
+            </c:if>
+
+            <b:navBar brand="Home" brand-href="indextutor.xhtml">
+                <b:navbarLinks>
+                    <b:navLink value="Cadastrar Pet" iconAwesome="fa-plus" onclick="$('.modalcadastropet').modal('show')"/>
+                    <b:navCommandLink value="Visualizar Pets" iconAwesome="fa-navicon" action="informacoespet.xhtml"/>
+                    <b:navCommandLink value="Pet Compartilhado" iconAwesome="fa-group" onclick="$('.modalcadastropetcompartilhado').modal('show')"/>
+
+
+
+                </b:navbarLinks>
+                <b:navbarLinks pull="right">
+                    <b:dropMenu value="#{loginController.logado.usuario}" iconAwesome="fa-user">
+                        <b:navCommandLink value="Meu Perfil" iconAwesome="fa-edit" action="informacoestutor.xhtml"/>
+                        <b:navLink></b:navLink>
+                        <b:navCommandLink value="Logout" iconAwesome="fa-sign-out"  action="#{loginController.logout()}"/>
+                    </b:dropMenu>
+                </b:navbarLinks>    
+            </b:navBar>
+
+        </b:form>
+
+    
+        <b:panelGrid columns="1">
+        <b:panel>
+            <img src="data:image/jpeg;base64,#{petController.formatImagemIndex(petController.selection.imagem)}" style="width: 300px; height: 300px; object-fit: cover; border-radius: 50%;"/>    
+        </b:panel>
+            
+            <b:panelGrid columns="2">
+                    <h:outputText value="Nome"/>
+                    <h:outputText  value="#{petController.selection.nome}"/>
+
+                    <h:outputText value="Mês e Ano de Nascimento"/>
+                    <h:outputText  value="#{petController.selection.mesAnoNascimento}"/>
+
+                    <h:outputText value="Porte"/>
+                    <h:outputText  value="#{petController.selection.porte}"/>
+
+                    <h:outputText value="Código de Compartilhamento"/>
+                    <h:outputText  value="#{petController.selection.codigoUnico}"/>
+        </b:panelGrid>
+        </b:panelGrid>
+    </h:body>
+</html>
+

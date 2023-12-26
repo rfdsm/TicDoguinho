@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b="http://bootsfaces.net/ui">
+    <h:head>
+        <title>TicDoguinho</title>
+    </h:head>
+    <h:body>
+        <b:growl id="gro" show-summary="true" show-detail="true" delay="4000"/>
+
+        <b:jumbotron>
+            <h3 align="center">Bem vindo ao TicDoguinho!</h3>
+        </b:jumbotron>
+
+        <p:dialog id="dialLogin" draggable="false" closable="false"
+                  closeOnEscape="false" resizable="false" modal="false"
+                  visible="true">
+
+            <b:form>         
+                <b:panelGrid columns="2">
+
+                    <h:outputText value="Usuário"/>
+                    <b:inputText value="#{usuario}"/>
+
+                    <h:outputText value="Senha"/>
+                    <b:inputSecret value="#{senha}"/>
+
+                </b:panelGrid>
+
+                <b:commandButton value="Logar" look="primary"
+                                 action="#{loginController.logar(usuario, senha)}"/><br/>
+                <h:outputText value="não é registrado?  "/>
+                <b:button look="link" value="Registrar" onclick="$('.modalcadastro').modal('show')"/>
+
+            </b:form>
+        </p:dialog>
+
+        <b:form id="formCadTutor">
+            <b:modal id="modalCadastro" title="Primeiro cadastro" class="modalcadastro">
+
+                <b:panelGrid columns="2">
+                    <h:outputText value="Usuário:"/>
+                    <b:inputText  value="#{tutorController.tutorCadastro.usuario}"/>
+
+
+                    <h:outputText value="Senha:"/>
+                    <b:inputSecret value="#{tutorController.tutorCadastro.senha}"/>
+
+
+                    <h:outputText value="Confirma senha:"/>
+                    <b:inputSecret value="#{confirma}"/>
+
+
+                    <h:outputText value="Email:" />
+                    <b:inputText  value="#{tutorController.tutorCadastro.email}"/>
+
+
+                    <h:outputText value="Mamãe:"/>
+                    <b:selectBooleanCheckbox value="#{tutorController.tutorCadastro.mamae}"/>
+
+                    <b:commandButton value="Cadastrar"
+                                     action="#{tutorController.inserir(confirma)}"/>
+
+                </b:panelGrid>
+            </b:modal>
+        </b:form>
+
+    </h:body>
+</html>
+
