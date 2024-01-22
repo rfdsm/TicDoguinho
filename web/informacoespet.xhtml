@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>TicDoguinho</title>
+    </h:head>
+    <h:body>
+
+        <ui:include src="menututor.xhtml" rendered="true"/>
+
+        <b:form id="formVisualizarPets">         
+            <b:dataTable id="tablepet" value="#{petController.readPets()}" var="pet">
+
+                <b:dataTableColumn value="#{pet.codigo}"/>
+
+                <b:dataTableColumn value="#{pet.nome}">
+                </b:dataTableColumn>
+
+                <b:dataTableColumn value="#{pet.mesAnoNascimento}">
+                </b:dataTableColumn>
+
+                <b:dataTableColumn value="#{pet.porte}">
+
+                </b:dataTableColumn>
+
+                <b:dataTableColumn label="Opeações">
+                    <b:commandButton value="Visualizar" iconAwesome="fa-eye" ajax="true" oncomplete="$('.modalvisualipet').modal('show')" update="modalVisualiPet">
+                        <f:setPropertyActionListener value="#{pet}" target="#{petController.selection}"/>
+                    </b:commandButton>
+
+                    <b:commandButton value="Editar" iconAwesome="fa-edit" ajax="true" oncomplete="$('.modalalterapet').modal('show')" update="formAltera">
+                        <f:setPropertyActionListener value="#{pet}" target="#{petController.selection}"/>
+                    </b:commandButton>
+                </b:dataTableColumn>
+
+
+            </b:dataTable>
+
+        </b:form>
+
+
+        <b:modal id="modalVisualiPet" title="Visualizar Perfil Pet" class="modalvisualipet">
+            <b:form id="formVisuali">
+                <b:panelGrid columns="2">
+
+                    <h:outputText value="Nome"/>
+                    <h:outputText  value="#{petController.selection.nome}"/>
+
+                    <h:outputText value="Mês e Ano de Nascimento"/>
+                    <h:outputText  value="#{petController.selection.mesAnoNascimento}"/>
+
+                    <h:outputText value="Porte"/>
+                    <h:outputText  value="#{petController.selection.porte}"/>
+
+                    <h:outputText value="Código de Compartilhamento"/>
+                    <h:outputText  value="#{petController.selection.codigoUnico}"/>
+
+
+                </b:panelGrid>
+
+                <b:button value="Fechar" dismiss="modal" />
+
+            </b:form>
+        </b:modal>
+
+
+        <b:modal id="modalAlteraPet" title="Alterar Pet" class="modalalterapet">
+            <b:form id="formAltera">
+                <b:panelGrid columns="2">
+
+                    <h:outputText value="Nome"/>
+                    <b:inputText  value="#{petController.selection.nome}"/>
+
+                    <h:outputText value="Mês e Ano de Nascimento"/>
+                    <b:inputText  value="#{petController.selection.mesAnoNascimento}"/>
+
+                    <h:outputText value="Porte"/>
+                    <b:inputText  value="#{petController.selection.porte}"/>
+
+
+                </b:panelGrid>
+
+                <b:commandButton value="Alterar" action="#{petController.alterar()}" />
+
+            </b:form>
+        </b:modal>
+
+
+    </h:body>
+</html>
+
