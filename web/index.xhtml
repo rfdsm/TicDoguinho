@@ -7,12 +7,12 @@
     <h:head>
         <title>TicDoguinho</title>
     </h:head>
-    <h:body>
+    <h:body style="background-image: url('#{request.contextPath}/resources/images/paginicial.jpg'); background-size: cover">
         <b:growl id="gro" show-summary="true" show-detail="true" delay="4000"/>
 
-        <b:jumbotron>
-            <h3 align="center">Bem vindo ao TicDoguinho!</h3>
-        </b:jumbotron>
+        <br></br>
+        <h3 align="center" style="text-align: center; color: white; font-family: 'Arial', sans-serif; font-size: 60px;" >Bem vindo ao TicDoguinho!</h3>
+        <h1 align="center" style="text-align: center; color: white; font-family: 'Arial', sans-serif; font-size: 20px;" >Conectando Patas, Criando Laços.</h1>
 
         <p:dialog id="dialLogin" draggable="false" closable="false"
                   closeOnEscape="false" resizable="false" modal="false"
@@ -29,7 +29,7 @@
 
                 </b:panelGrid>
 
-                <b:commandButton value="Logar" look="primary"
+                <b:commandButton value="Logar" look="primary" icon-awesome="fa-check"
                                  action="#{loginController.logar(usuario, senha)}"/><br/>
                 <h:outputText value="não é registrado?  "/>
                 <b:button look="link" value="Registrar" onclick="$('.modalcadastro').modal('show')"/>
@@ -44,14 +44,12 @@
                     <h:outputText value="Usuário:"/>
                     <b:inputText  value="#{tutorController.tutorCadastro.usuario}"/>
 
-
                     <h:outputText value="Senha:"/>
                     <b:inputSecret value="#{tutorController.tutorCadastro.senha}"/>
 
 
                     <h:outputText value="Confirma senha:"/>
                     <b:inputSecret value="#{confirma}"/>
-
 
                     <h:outputText value="Email:" />
                     <b:inputText  value="#{tutorController.tutorCadastro.email}"/>

@@ -27,15 +27,14 @@ public class CompartilhamentoPet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int codigo;
 
-      
     @ManyToOne
     @JoinColumn(name = "tutor_recebedor_codigo")
-    private Tutor tutorRecebedor;
+    private Tutor tutor;
 
-    @Column(name = "codigo_unico")
-    private String codigoUnico;
+    @ManyToOne
+    @JoinColumn(name = "pet")
+    private Pet pet;
 
-    
     public int getCodigo() {
         return codigo;
     }
@@ -44,21 +43,20 @@ public class CompartilhamentoPet {
         this.codigo = codigo;
     }
 
-    public String getCodigoUnico() {
-        return codigoUnico;
+    public Tutor getTutor() {
+        return tutor;
     }
 
-    public void setCodigoUnico(String codigoUnico) {
-        this.codigoUnico = codigoUnico;
+    public void setTutor(Tutor tutor) {
+        this.tutor = tutor;
     }
 
-  
-    public Tutor getTutorRecebedor() {
-        return tutorRecebedor;
+    public Pet getPet() {
+        return pet;
     }
 
-    public void setTutorRecebedor(Tutor tutorRecebedor) {
-        this.tutorRecebedor = tutorRecebedor;
+    public void setPet(Pet pet) {
+        this.pet = pet;
     }
 
 }

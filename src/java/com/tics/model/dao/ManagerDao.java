@@ -65,6 +65,23 @@ public class ManagerDao {
         return returnedList;
     }
     
+    public List reads(String query,Class c, Map<String, Object> param){
+        
+        EntityManager em = emf.createEntityManager();
+        
+        TypedQuery<?> typedQuery = em.createQuery(query,c);
+        
+        for(Map.Entry<String, Object> entry :param.entrySet()){
+             typedQuery.setParameter(entry.getKey(),entry.getValue());
+        }
+
+        List returnedList = typedQuery.getResultList();
+        
+        em.close();
+        
+        return returnedList;
+    }
+    
     public void delete(Object o){
         EntityManager em = emf.createEntityManager();
         

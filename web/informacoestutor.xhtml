@@ -11,8 +11,8 @@
         <title>TicDoguinho</title>
     </h:head>
     <h:body>
-        
-         <b:growl id="grow" delay="4000"/>
+
+        <b:growl id="grow" delay="4000"/>
 
         <b:form id="menuTutor">
 
@@ -25,11 +25,10 @@
             <b:navBar brand="Home" brand-href="indextutor.xhtml">
                 <b:navbarLinks>
                     <b:navLink value="Cadastrar Pet" iconAwesome="fa-plus" onclick="$('.modalcadastropet').modal('show')"/>
-                    <b:navCommandLink value="Visualizar Pets" iconAwesome="fa-navicon" action="informacoespet.xhtml"/>
                     <b:navCommandLink value="Pet Compartilhado" iconAwesome="fa-group" onclick="$('.modalcadastropetcompartilhado').modal('show')"/>
 
                 </b:navbarLinks>
-                
+
                 <b:navbarLinks pull="right">
                     <b:dropMenu value="#{loginController.logado.usuario}" iconAwesome="fa-user">
                         <b:navCommandLink value="Meu Perfil" iconAwesome="fa-edit" action="informacoestutor.xhtml"/>
@@ -40,7 +39,7 @@
             </b:navBar>
 
         </b:form>
-        
+
 
         <b:form>
             <b:panelGrid columns="2" col-spans="2,10">
@@ -113,11 +112,45 @@
                                      action="#{tutorController.alterarSenha(senha, novaSenha, confirma)}"/>
 
                 </b:panelGrid>
-
             </b:modal>     
-
         </b:form>
 
+        <b:form id="formCadPet" enctype="multipart/form-data">
+            <b:modal id="modalCadastroPet" title="Cadastrar Pet" class="modalcadastropet">
+                <p:fileUpload fileUploadListener="#{petController.upload}"  mode="advanced"/><br></br>
+
+                <b:panelGrid columns="2">
+                    <h:outputText value="Nome:"/>
+                    <b:inputText  value="#{petController.petCadastro.nome}"/>
+
+                    <h:outputText value="Mês e Ano do Nascimento:"/>
+                    <b:inputText value="#{petController.petCadastro.mesAnoNascimento}"/>
+
+                    <h:outputText value="Porte:"/>
+                    <b:selectOneMenu value="#{petController.petCadastro.porte}">
+                        <f:selectItem itemValue="Pequeno" itemLabel="Pequeno" /> 
+                        <f:selectItem itemValue="Médio" itemLabel="Médio"/>
+                        <f:selectItem itemValue="Grande" itemLabel="Grande"/>
+                    </b:selectOneMenu> 
+
+                    <b:commandButton value="Cadastrar"
+                                     action="#{petController.inserir()}"/>
+                </b:panelGrid>
+            </b:modal>
+        </b:form>
+
+        <b:form id="formCadPetCompartilhado">
+            <b:modal id="modalCadastroPetCompartilhado" title="Cadastrar Pet Compartilhado" class="modalcadastropetcompartilhado">
+
+                <b:panelGrid columns="2">
+                    <h:outputText value="Código do Pet:"/>
+                    <b:inputText  value="#{codigoUnico}"/>
+
+                    <b:commandButton value="Compartilhar"
+                                     action="#{petController.compartilharPet(codigoUnico)}"/>
+                </b:panelGrid>
+            </b:modal>
+        </b:form>
     </h:body>
 </html>
 

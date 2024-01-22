@@ -12,7 +12,9 @@ import com.tics.model.negocio.Tutor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -37,6 +39,11 @@ public class PetController {
     private String modalType;
     private String codigoUnico;
     private String codigoUnicoPetCompartilhado;
+    private int petBuscaCodigo;
+    private Pet petPesquisado;
+
+    private List<Pet> petsEncontrados;
+    private String nomePetParaBuscar;
 
     @ManagedProperty(value = "#{loginController}")
     private LoginController loginController;
@@ -51,12 +58,16 @@ public class PetController {
 
         Tutor tutorLogado = loginController.getLogado();
 
+        CompartilhamentoPet compartilhamentopet = new CompartilhamentoPet();
+
         if (tutorLogado != null) {
 
-            petCadastro.setTutor(tutorLogado);
-            petCadastro.setCodigoUnico(gerarCodigoUnico());
-            tutorLogado.getPets().add(petCadastro);
-            ManagerDao.getCurrentInstance().insert(petCadastro);
+            compartilhamentopet.setTutor(tutorLogado);
+            compartilhamentopet.setPet(this.petCadastro);
+
+            ManagerDao.getCurrentInstance().insert(this.petCadastro);
+            ManagerDao.getCurrentInstance().insert(compartilhamentopet);
+
             this.petCadastro = new Pet();
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pet cadastrado com sucesso!"));
@@ -68,15 +79,15 @@ public class PetController {
         return "";
     }
 
-    private String gerarCodigoUnico() {
-
-        return UUID.randomUUID().toString();
-    }
-
     public List<Pet> readPets() {
-
+        Tutor tutorLogado = loginController.getLogado();
         List<Pet> pets = null;
-        pets = ManagerDao.getCurrentInstance().read("select p from Pet p", Pet.class);
+
+        String jpql = "select cp.pet from CompartilhamentoPet cp where cp.tutor = :tutor";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("tutor", tutorLogado);
+
+        pets = ManagerDao.getCurrentInstance().reads(jpql, Pet.class, parameters);
         return pets;
 
     }
@@ -131,33 +142,30 @@ public class PetController {
                         new FacesMessage("Infelizmente você deletou o seu Pet!"));
     }
 
-    public String compartilharPet() {
+    public String compartilharPet(String codigoUnico) {
 
-        Tutor tutorLogado = loginController.getLogado();
-        Pet petSelecionado = selection;
+        Pet pet = (Pet) ManagerDao.getCurrentInstance().read("select p from Pet p where p.codigoUnico = '" + codigoUnico + "'", Pet.class).get(0);
+        CompartilhamentoPet compartilhamentoPet;
+        Tutor tutor;
 
-        if (codigoUnicoPetCompartilhado != null && !codigoUnicoPetCompartilhado.isEmpty()) {
+        if (pet != null && !codigoUnico.isEmpty()) {
+            compartilhamentoPet = new CompartilhamentoPet();
+            tutor = loginController.getLogado();
 
-            List<CompartilhamentoPet> compPets = ManagerDao.getCurrentInstance().read("select cp from CompartilhamentoPet cp where cp.codigoUnico ='" + codigoUnicoPetCompartilhado + "'", CompartilhamentoPet.class);
-            if (compPets.size() == 2) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pet atingiu o limite de tutores.", ""));
-
-                return null;
-            }
-            CompartilhamentoPet compartilhamentoPet = new CompartilhamentoPet();
-            compartilhamentoPet.setCodigoUnico(codigoUnicoPetCompartilhado);
-            compartilhamentoPet.setTutorRecebedor(tutorLogado);
+            compartilhamentoPet.setPet(pet);
+            compartilhamentoPet.setTutor(tutor);
 
             ManagerDao.getCurrentInstance().insert(compartilhamentoPet);
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Pet Compartilhado com sucesso", "Código único fornecido."));
-
-            codigoUnicoPetCompartilhado = null;
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Código único não fornecido.", "Código único não fornecido."));
+            return "menututor.xhtml";
         }
 
         return null;
+    }
+
+    public List<CompartilhamentoPet> tutoresDoSelection() {
+        return ManagerDao.getCurrentInstance().read("select cp from CompartilhamentoPet cp where cp.pet.codigo = " + this.selection.getCodigo(), Pet.class);
+
     }
 
     public String getCodigoUnico() {
@@ -217,4 +225,88 @@ public class PetController {
                 .getExternalContext().getSession(true))
                 .getAttribute("loginController")).getTutorLogado();
     }
+
+    public String imagemPetPesquisa(Pet pet) {
+        byte[] blob = pet.getImagem();
+        return blob != null ? Base64.getEncoder().encodeToString(blob) : "";
+    }
+
+    public String imagemPetPesquisado() {
+        byte[] blob = buscarPesquisaPet().getImagem();
+        return blob != null ? Base64.getEncoder().encodeToString(blob) : "";
+
+    }
+
+    public List<CompartilhamentoPet> tutorPetPesquisa(Pet pet) {
+        return ManagerDao.getCurrentInstance().read("select cp from CompartilhamentoPet cp where cp.pet.codigo =" + buscarPesquisaPet().getCodigo(), Pet.class);
+    }
+
+    public List<CompartilhamentoPet> tutorPetPesquisado(Pet pet) {
+        return ManagerDao.getCurrentInstance().read("select cp from CompartilhamentoPet cp where cp.pet.codigo =" + pet.getCodigo(), Pet.class);
+    }
+
+    public int getPetBuscaCodigo() {
+        return petBuscaCodigo;
+    }
+
+    public void setPetBuscaCodigo(int petBuscaCodigo) {
+        this.petBuscaCodigo = petBuscaCodigo;
+    }
+
+    public Pet getPetPesquisado() {
+        return petPesquisado;
+    }
+
+    public void setPetPesquisado(Pet petPesquisado) {
+        this.petPesquisado = petPesquisado;
+    }
+
+    public List<Pet> pesquisarPet(String petNome) {
+
+        List<Pet> petsEncontrados = ManagerDao.getCurrentInstance().read("select p from Pet p where p.nome = '" + petNome + "'", Pet.class);
+
+        return petsEncontrados;
+
+    }
+
+    public Pet buscarPesquisaPet() {
+        return (Pet) ManagerDao.getCurrentInstance().read("select p from Pet p where p.codigo = " + this.petBuscaCodigo, Pet.class).get(0);
+    }
+
+    public void seguir() {
+        this.petPesquisado = buscarPesquisaPet();
+
+        if (petPesquisado != null) {
+            this.selection.getSeguindo().add(this.petPesquisado);
+            this.petPesquisado.getSeguidores().add(this.selection);
+            ManagerDao.getCurrentInstance().update(this.selection);
+            ManagerDao.getCurrentInstance().update(this.petPesquisado);
+
+        }
+    }
+
+    public void deixarDeSeguir() {
+        this.petPesquisado = buscarPesquisaPet();
+
+        if (petPesquisado != null) {
+            this.selection.getSeguindo().remove(this.petPesquisado);
+            this.petPesquisado.getSeguidores().remove(this.selection);
+            ManagerDao.getCurrentInstance().update(this.selection);
+            ManagerDao.getCurrentInstance().update(this.petPesquisado);
+
+        }
+    }
+
+    public boolean jaESeguidor() {
+        this.petPesquisado = buscarPesquisaPet();
+
+        for (Pet pet : this.selection.getSeguindo()) {
+            if (pet.getCodigo() == this.petPesquisado.getCodigo()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

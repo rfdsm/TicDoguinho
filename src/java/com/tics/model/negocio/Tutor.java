@@ -32,32 +32,9 @@ public class Tutor {
     private String senha;
     private String email;
     private boolean mamae;
-    
+
     @Lob
     private byte[] imagem;
-
-    @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Pet> pets = new ArrayList<>();
-
-    @OneToMany(mappedBy = "tutorRecebedor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CompartilhamentoPet> compartilhamentosRecebidos = new ArrayList<>();
-
-    public List<Pet> getPets() {
-        return pets;
-    }
-
-    public void setPets(List<Pet> pets) {
-        this.pets = pets;
-    }
-
-
-    public List<CompartilhamentoPet> getCompartilhamentosRecebidos() {
-        return compartilhamentosRecebidos;
-    }
-
-    public void setCompartilhamentosRecebidos(List<CompartilhamentoPet> compartilhamentosRecebidos) {
-        this.compartilhamentosRecebidos = compartilhamentosRecebidos;
-    }
 
     public int getCodigo() {
         return codigo;
@@ -107,5 +84,4 @@ public class Tutor {
         this.imagem = imagem;
     }
 
-    
 }
