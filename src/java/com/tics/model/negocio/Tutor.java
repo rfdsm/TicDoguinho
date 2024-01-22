@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -31,6 +32,9 @@ public class Tutor {
     private String senha;
     private String email;
     private boolean mamae;
+    
+    @Lob
+    private byte[] imagem;
 
     @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pet> pets = new ArrayList<>();
@@ -95,4 +99,13 @@ public class Tutor {
         this.mamae = mamae;
     }
 
+    public byte[] getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(byte[] imagem) {
+        this.imagem = imagem;
+    }
+
+    
 }

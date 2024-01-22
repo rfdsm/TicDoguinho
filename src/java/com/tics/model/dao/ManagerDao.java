@@ -5,6 +5,7 @@
  */
 package com.tics.model.dao;
 
+import com.tics.model.negocio.Pet;
 import com.tics.model.negocio.Tutor;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,18 @@ public class ManagerDao {
         em.remove(oDelete);
         em.getTransaction().commit();
         em.close();
+    }
+
+    public List<Pet> read(String jpql, Class<Pet> aClass, Map<String, Object> params) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Object createQuery(String query, Class<Pet> aClass) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public EntityManager getEntityManager() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
      
     

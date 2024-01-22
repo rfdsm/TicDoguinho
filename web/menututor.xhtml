@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:b="http://bootsfaces.net/ui"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>TicDoguinho</title>
 
@@ -40,10 +42,13 @@
 
         </b:form>
 
-        <b:form id="formCadPet">
+        <b:form id="formCadPet" enctype="multipart/form-data">
 
             <b:modal id="modalCadastroPet" title="Cadastrar Pet" class="modalcadastropet">
 
+                <p:fileUpload fileUploadListener="#{petController.upload}"  mode="advanced"/><br></br>
+
+                
                 <b:panelGrid columns="2">
                     <h:outputText value="Nome:"/>
                     <b:inputText  value="#{petController.petCadastro.nome}"/>
@@ -52,8 +57,13 @@
                     <h:outputText value="Mês e Ano do Nascimento:"/>
                     <b:inputText value="#{petController.petCadastro.mesAnoNascimento}"/>
 
-                    <h:outputText value="Porte:"/>
-                    <b:inputText value="#{petController.petCadastro.porte}"/>
+                     <h:outputText value="Porte:"/>
+                    <b:selectOneMenu value="#{petController.petCadastro.porte}">
+                        <f:selectItem itemValue="Pequeno" itemLabel="Pequeno" /> 
+                        <f:selectItem itemValue="Médio" itemLabel="Médio"/>
+                        <f:selectItem itemValue="Grande" itemLabel="Grande"/>
+                    </b:selectOneMenu> 
+
 
 
                     <b:commandButton value="Cadastrar"
@@ -78,7 +88,28 @@
                 </b:panelGrid>
             </b:modal>
         </b:form>
+        
+        <b:form id="formVisualizarPetsIndex"> 
+            <b:panelGrid colSpans="4,4,4">
 
+                <c:forEach items="#{petController.readPets()}"
+                           var="pet">
+                    
+                                                
+                        <b:panel>
+                            <b:commandLink action="exibirpetselecionado.xhtml">
+                                        <f:setPropertyActionListener value="#{pet}" target="#{petController.selection}" />
+                                        <img src="data:image/jpeg;base64,#{petController.formatImagemIndex(pet.imagem)}"  style=" width: 150px; height: 150px; object-fit: cover; border-radius: 50%;"/>
+                                              
+                                    </b:commandLink>
+                            </b:panel>
+
+                        
+
+                    
+                </c:forEach>
+            </b:panelGrid>
+        </b:form> 
 
     </h:body>
 </html>

@@ -5,12 +5,42 @@
       xmlns:b="http://bootsfaces.net/ui"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <title>TicDoguinho</title>
     </h:head>
     <h:body>
-        <ui:include src="menututor.xhtml" rendered="true"/>
+        
+         <b:growl id="grow" delay="4000"/>
+
+        <b:form id="menuTutor">
+
+            <c:if test="#{loginController.logado==null}">
+                <script>
+                    location.href = ' index.xhtml';
+                </script>
+            </c:if>
+
+            <b:navBar brand="Home" brand-href="indextutor.xhtml">
+                <b:navbarLinks>
+                    <b:navLink value="Cadastrar Pet" iconAwesome="fa-plus" onclick="$('.modalcadastropet').modal('show')"/>
+                    <b:navCommandLink value="Visualizar Pets" iconAwesome="fa-navicon" action="informacoespet.xhtml"/>
+                    <b:navCommandLink value="Pet Compartilhado" iconAwesome="fa-group" onclick="$('.modalcadastropetcompartilhado').modal('show')"/>
+
+                </b:navbarLinks>
+                
+                <b:navbarLinks pull="right">
+                    <b:dropMenu value="#{loginController.logado.usuario}" iconAwesome="fa-user">
+                        <b:navCommandLink value="Meu Perfil" iconAwesome="fa-edit" action="informacoestutor.xhtml"/>
+                        <b:navLink></b:navLink>
+                        <b:navCommandLink value="Logout" iconAwesome="fa-sign-out"  action="#{loginController.logout()}"/>
+                    </b:dropMenu>
+                </b:navbarLinks>    
+            </b:navBar>
+
+        </b:form>
+        
 
         <b:form>
             <b:panelGrid columns="2" col-spans="2,10">
@@ -25,8 +55,14 @@
 
                 </b:panel>
                 <b:panel>
+
                     <h:outputText value="Perfil de: "  style="font-size: 18pt"/>
                     <h:outputText value="#{loginController.logado.usuario}" style="font-size: 15pt; font-style: italic"/>
+                    <c:if test="#{loginController.logado.imagem ne null}">
+                        <b:panel>
+                            <img src="data:image/jpeg;base64,#{tutorController.imagemTutor}" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%;"/>
+                        </b:panel>
+                    </c:if>
                     <b:panelGrid columns="2" colSpans="2,10">
                         <h:outputText value="E-mail:"/>
                         <h:outputText  value="#{loginController.logado.email}"/>
@@ -36,9 +72,17 @@
             </b:panelGrid>
         </b:form>
 
-        <b:form id="formEditarTutor">
+        <b:form id="formEditarTutor" enctype="multipart/form-data">
             <b:modal id="modalEditarTutor" title="Alterar Perfil" class="modaleditar">
-                <b:panelGrid columns="2">
+                <b:panelGrid columns="1">
+
+                    <c:if test="#{loginController.logado.imagem ne null}">
+                        <b:panel>
+                            <img src="data:image/jpeg;base64,#{tutorController.imagemTutor}" style=" height: 200px; border-radius: 50%;"/>
+                        </b:panel>
+                    </c:if>
+                    <p:fileUpload fileUploadListener="#{tutorController.handleFileUpload}" mode="advanced"/>
+                    <p:graphicImage id="imgOutputTutor" value="#{tutorController.graphicImage}"/>
 
                     <h:outputText value="Email:"/>
                     <b:inputText  value="#{loginController.logado.email}"/>

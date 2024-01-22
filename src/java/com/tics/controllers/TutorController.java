@@ -7,6 +7,8 @@ package com.tics.controllers;
 
 import com.tics.model.dao.ManagerDao;
 import com.tics.model.negocio.Tutor;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -14,6 +16,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import org.primefaces.event.FileUploadEvent;
 
 /**
  *
@@ -148,4 +151,42 @@ public class TutorController {
         return modalType;
     }
 
+    public void handleFileUpload(FileUploadEvent event) throws IOException {
+
+        byte[] im = new byte[(int) event.getFile().getSize()];
+        event.getFile().getInputstream().read(im);
+        Tutor tutorLogado = tutorLogadoSession();
+        tutorLogado.setImagem(im);
+        FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage("Imagem Salva com sucesso!"));
+
+    }
+    
+    public String getImagemTutor() {
+        Tutor tutorLogado = tutorLogadoSession();
+    if (tutorLogado != null) {
+        byte[] im = tutorLogado.getImagem();
+        return im != null ? Base64.getEncoder().encodeToString(im) : "";
+    } else {
+        return ""; // ou alguma string padrão se tutorLogado for nulo
+    }
+    }
+    
+    public String getGraphicImage() {
+        Tutor tutorLogado = tutorLogadoSession();
+    if (tutorLogado != null) {
+        byte[] im = tutorLogado.getImagem();
+        return im != null ? Base64.getEncoder().encodeToString(im) : "";
+    } else {
+        return ""; // ou alguma string padrão se tutorLogado for nulo
+    }
+    }
+    
+    private Tutor tutorLogadoSession() {
+        return ((LoginController) ((HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true))
+                .getAttribute("loginController")).getLogado();
+    }
+    
+    
 }

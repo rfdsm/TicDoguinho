@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -33,6 +34,9 @@ public class Pet {
     private String porte;
     @Column(name = "codigo_unico", unique = true)
     private String codigoUnico;
+    
+    @Lob
+    private byte[] imagem;
 
     @ManyToOne
     @JoinColumn(name = "tutor_codigo")
@@ -87,4 +91,12 @@ public class Pet {
         this.codigoUnico = codigoUnico;
     }
 
+    public byte[] getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(byte[] imagem) {
+        this.imagem = imagem;
+    }
+ 
 }

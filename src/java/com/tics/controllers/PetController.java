@@ -9,7 +9,9 @@ import com.tics.model.dao.ManagerDao;
 import com.tics.model.negocio.CompartilhamentoPet;
 import com.tics.model.negocio.Pet;
 import com.tics.model.negocio.Tutor;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
@@ -19,6 +21,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+import org.primefaces.event.FileUploadEvent;
 
 /**
  *
@@ -26,7 +30,6 @@ import javax.faces.context.FacesContext;
  */
 @ManagedBean
 @SessionScoped
-@ViewScoped
 public class PetController {
 
     private Pet petCadastro;
@@ -135,15 +138,15 @@ public class PetController {
 
         if (codigoUnicoPetCompartilhado != null && !codigoUnicoPetCompartilhado.isEmpty()) {
 
-            List<CompartilhamentoPet> compPets = ManagerDao.getCurrentInstance().read("select cp from CompartilhamentoPet cp where cp.codigoUnico ='" + codigoUnicoPetCompartilhado +"'",CompartilhamentoPet.class);
-            if(compPets.size() == 2){
+            List<CompartilhamentoPet> compPets = ManagerDao.getCurrentInstance().read("select cp from CompartilhamentoPet cp where cp.codigoUnico ='" + codigoUnicoPetCompartilhado + "'", CompartilhamentoPet.class);
+            if (compPets.size() == 2) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Pet atingiu o limite de tutores.", ""));
-                
+
                 return null;
             }
             CompartilhamentoPet compartilhamentoPet = new CompartilhamentoPet();
             compartilhamentoPet.setCodigoUnico(codigoUnicoPetCompartilhado);
-            compartilhamentoPet.setTutorRecebedor(tutorLogado); 
+            compartilhamentoPet.setTutorRecebedor(tutorLogado);
 
             ManagerDao.getCurrentInstance().insert(compartilhamentoPet);
 
@@ -173,4 +176,45 @@ public class PetController {
         this.codigoUnicoPetCompartilhado = codigoUnicoPetCompartilhado;
     }
 
+    public void upload(FileUploadEvent e) throws IOException {
+        byte[] blob = new byte[(int) e.getFile().getSize()];
+        e.getFile().getInputstream().read(blob);
+
+        this.petCadastro.setImagem(blob);
+
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Imagem carregada com sucesso."));
+    }
+
+    public void uploadChange(FileUploadEvent e) throws IOException {
+        byte[] blob = new byte[(int) e.getFile().getSize()];
+        e.getFile().getInputstream().read(blob);
+
+        this.selection.setImagem(blob);
+
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Imagem carregada com sucesso."));
+    }
+
+    public String getImagemPet() {
+        if (this.selection != null) {
+            byte[] blob = this.selection.getImagem();
+            return blob != null ? Base64.getEncoder().encodeToString(blob) : "";
+        } else {
+            return "";
+        }
+    }
+
+    public String formatImagemIndex(byte[] blob) {
+        return blob != null ? Base64.getEncoder().encodeToString(blob) : "";
+    }
+
+    public String getGraphicImage() {
+        byte[] blob = this.petCadastro.getImagem();
+        return blob != null ? Base64.getEncoder().encodeToString(blob) : "";
+    }
+
+    private Tutor tutorLogadoSession() {
+        return ((LoginController) ((HttpSession) FacesContext.getCurrentInstance()
+                .getExternalContext().getSession(true))
+                .getAttribute("loginController")).getTutorLogado();
+    }
 }

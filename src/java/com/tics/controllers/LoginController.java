@@ -58,4 +58,8 @@ public class LoginController {
         this.logado = logado;
     }
 
+    Tutor getTutorLogado() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

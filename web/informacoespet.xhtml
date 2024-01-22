@@ -12,10 +12,40 @@
     </h:head>
     <h:body>
 
-        <ui:include src="menututor.xhtml" rendered="true"/>
+        <b:growl id="grow" delay="4000"/>
 
-        <b:form id="formVisualizarPets">         
+        <b:form id="menuTutor">
+
+            <c:if test="#{loginController.logado==null}">
+                <script>
+                    location.href = ' index.xhtml';
+                </script>
+            </c:if>
+
+            <b:navBar brand="Home" brand-href="indextutor.xhtml">
+                <b:navbarLinks>
+                    <b:navLink value="Cadastrar Pet" iconAwesome="fa-plus" onclick="$('.modalcadastropet').modal('show')"/>
+                    <b:navCommandLink value="Visualizar Pets" iconAwesome="fa-navicon" action="informacoespet.xhtml"/>
+                    <b:navCommandLink value="Pet Compartilhado" iconAwesome="fa-group" onclick="$('.modalcadastropetcompartilhado').modal('show')"/>
+
+
+
+                </b:navbarLinks>
+                <b:navbarLinks pull="right">
+                    <b:dropMenu value="#{loginController.logado.usuario}" iconAwesome="fa-user">
+                        <b:navCommandLink value="Meu Perfil" iconAwesome="fa-edit" action="informacoestutor.xhtml"/>
+                        <b:navLink></b:navLink>
+                        <b:navCommandLink value="Logout" iconAwesome="fa-sign-out"  action="#{loginController.logout()}"/>
+                    </b:dropMenu>
+                </b:navbarLinks>    
+            </b:navBar>
+
+        </b:form>
+
+        <b:form id="formVisualizarPets" enctype="multipart/form-data">         
             <b:dataTable id="tablepet" value="#{petController.readPets()}" var="pet">
+                
+                
 
                 <b:dataTableColumn value="#{pet.codigo}"/>
 
@@ -46,9 +76,19 @@
 
 
         <b:modal id="modalVisualiPet" title="Visualizar Perfil Pet" class="modalvisualipet">
-            <b:form id="formVisuali">
-                <b:panelGrid columns="2">
-
+            <b:form id="formVisuali" enctype="multipart/form-data">
+                
+                    
+                    <c:if test="#{loginController.logado.imagem ne null}">
+                        <b:panel>
+                            <img src="data:image/jpeg;base64, #{petController.imagemPet} " style=" width: 150px; height: 150px; object-fit: cover; border-radius: 50%;"/>
+                        
+                        </b:panel>
+                    </c:if>
+                
+                
+                
+                    <b:panelGrid columns="2">
                     <h:outputText value="Nome"/>
                     <h:outputText  value="#{petController.selection.nome}"/>
 
@@ -71,7 +111,22 @@
 
 
         <b:modal id="modalAlteraPet" title="Alterar Pet" class="modalalterapet">
-            <b:form id="formAltera">
+            <b:form id="formAltera" enctype="multipart/form-data">
+                
+                <c:if test="#{loginController.logado.imagem ne null}">
+                        <b:panel>
+                            <img src="data:image/jpeg;base64, #{petController.imagemPet} " style=" width: 150px; height: 150px; object-fit: cover; border-radius: 50%;"/>
+
+                        </b:panel>
+                    </c:if>
+                
+                <p:fileUpload fileUploadListener="#{petController.uploadChange}"  mode="advanced"/><br></br>
+                <p:outputPanel id="imgOutput">
+                <p:graphicImage  value="#{petController.graphicImage}"/>
+                </p:outputPanel>
+                
+               
+
                 <b:panelGrid columns="2">
 
                     <h:outputText value="Nome"/>
